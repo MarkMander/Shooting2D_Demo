@@ -9,6 +9,7 @@ public class GameState
 
     public GameState()
     {
+        //Initialize totalScore variable
         this.totalScore = 0;
     }
 }
