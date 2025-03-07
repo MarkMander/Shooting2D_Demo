@@ -11,10 +11,10 @@ public class LogicScript : MonoBehaviour, IDataPersistance
     public int score;
     public int lvlThreshold;
 
-    public void Start()
-    {
+    //public void Start()
+    //{
         //scoreText = GameObject.FindGameObjectWithTag("Text").GetComponent<TextMeshProUGUI>();
-    }
+    //}
 
     public void LoadData(GameState state)
     {
