@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 public class DataPersistanceController : MonoBehaviour
 {
-    private GameState gameState;
+    private GameState gameState; 
     private List<IDataPersistance> dataPersObjs;
+    [SerializeField] private string fileName;
+    private FileDataHandler fileDataHandler;
     public static DataPersistanceController Instance { get; private set; }
 
     private void Awake()
@@ -20,6 +23,7 @@ public class DataPersistanceController : MonoBehaviour
 
     private void Start()
     {
+        fileDataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
         dataPersObjs = FindDataPersObjs();
         LoadGame();
     }
@@ -31,22 +35,32 @@ public class DataPersistanceController : MonoBehaviour
 
     private void SaveGame()
     {
-        //TODO send the gameState object to other classes so they can update it as needed
+        foreach (IDataPersistance dataObj in dataPersObjs)
+        {
+            dataObj.SaveData(ref gameState);
+        }
 
-        //TODO use data handler to write gameState object information 
+        fileDataHandler.Save(gameState);
+
+        Debug.Log("Saving score " + gameState.totalScore);
     }
 
     private void LoadGame()
     {
-        //TODO use dataHandler to load gamestate 
-        // if no data is found, that means we need to start a new game 
+        gameState = fileDataHandler.Load();
         if (this.gameState == null)
         {
             Debug.Log("No game data was found, initializing new game");
             NewGame();
         }
-        //TODO send saved GameState to all functions that may need it
+
+        foreach (IDataPersistance dataObj in dataPersObjs)
+        {
+            dataObj.LoadData(gameState); 
+        }
+        Debug.Log("Loading score " + gameState.totalScore);
     }
+
 
     private void OnApplicationQuit()
     {
